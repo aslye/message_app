@@ -1,0 +1,22 @@
+#main{ 
+    width: 100%;
+    margin: 0 auto;
+}
+
+#app-name{
+    width: auto;
+    float: left;
+    margin-left:0%;
+}
+
+#status{
+    width: auto;
+    float: left;
+    margin-left:2%;
+}
+
+#toggle-button{
+    width: auto;
+    float: left;
+    margin-left:10%;
+}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}FAQ{% endblock %}
+{% block breadcrumb %}{% endblock %}
+{% block page_content %}
+  <p><b>Information About The App</b></p>
+  <p>
+    This service is intended to help send group messages. I made a few assumptions when designing this app.
+  </p>
+  <ul>
+    <li>The people you are planning to message are indeed people you know</li>
+    <li>That you know the cell phone provider of the person you are trying to message</li>
+  </ul>
+  <br />
+  <p>
+    The last point is very important. In order to keep this app as free as possible I avoided using messaging services
+    like Twillio.  Instead the app takes advantage of the fact that ever provider has an email address that can be used 
+    to send and receive messages directly on your phone.  As such, providering the network is the currenly the only way to
+    ensure that the proper email address is found.
+  </p>
+  <p>
+    <b>NOTICE</b> I'm working on a way to sent the messages as if it came from your number, it currently sends from your email.
+  </p>
+  <p>
+    <b>Note</b> This app is in <b>BETA</b> and therefore may not work 100%, so please provider feedback. Thank you and Enjoy!
+  </p>
+  <br /><hr />
+  <div>
+    <p><b>Can I send pictures?</b></p>
+    <p>Yes you can, however the file can only be 3 mb or smaller and it must be an image file.</p>
+  </div>
+  <br />
+  <div>
+    <p><b>If I don't know the cell phone provider can I still use this app?</b></p>
+    <p>
+      No, the way the app works is that attaches the cell providers mms email address to the cell phone number in order
+      to text the person from an email account. e.g 1234567890@@tmomail.net
+    </p>
+  </div>
+  <div>
+    <p>
+      If you have specific questions please ask them in the feedback section. Thanks!
+    </p>
+  </div>
+  <div>
+    <div><b>Known Bugs</b></div>
+    <ul>
+      <li>
+        Database sometimes takes long to update after an edit to a group has been made or number has been removed
+        <p style="padding-left:1%"><b>Solution:</b> Give it a second or two and refresh the page, the reason this occurs is because i'm using a sandboxed mongodb instance while in beta</p>
+      </li>
+    </ul>
+  </div>
+  <br /><br /><br />
+{% endblock %}

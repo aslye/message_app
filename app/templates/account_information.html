@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block breadcrumb %}{% endblock %}
+
+{% block page_content %}
+  <div class="panel panel-default" style="margin: 0 auto; width: 50%">
+    <div class="panel-heading">
+      <div class="panel-title">
+        User Information
+        <span id="updated" style="background-color: #FBB0B0; padding: 10px; width: 100%; display: none;"><b>Account Updated</b></span>
+      </div>
+    </div>
+    <div class="panel-body">
+      <form role="form" id="edit_form">
+        <div class="row">
+          <div class="col-sm-12 col-md-12">
+            <div class="form-group form-group-default">
+              <label>Email</label>
+              <input type="email" class="form-control" value="" id="email" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12 col-md-12">
+            <div class="form-group form-group-default">
+              <label>User Name</label>
+              <input type="text" class="form-control" value="" id="username">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12 col-md-12">
+            <table class="table table-condensed">
+              <thead>
+                <tr>
+                  <th>Cellphone Number</th>
+                  <th>Provider</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <input class='' maxlength="10" minlength="10" type="text" id="phonenumber" name="phonenumber" onkeypress='validate(event);' placeholder="Enter 10 digit number" class="phone_input" required>
+                  </td>
+                  <td>
+                    <select width="100%" style="width:100%" data-init-plugin="" placeholder="" class="provider" id="provider">
+                      <option value="att">A &amp; TT</option>
+                      <option value="tmobile">Tmobile</option>
+                      <option value="metro pcs">Metro Pcs</option>
+                      <option value="verizon">Verizon</option>
+                    </select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </form>
+      <div class="row">
+        <div class="col-sm-6 col-md-6">
+          <button id="save_btn" class="btn btn-info btn-cons m-b-10" type="button"><i class="fa fa-pencil"></i> <span class="bold">Save</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{super()}}
+  <script>
+    $(document).ready(function(){
+      $('#edit_form').validate();
+      
+      var email = "{{account['email']|safe}}";
+      var username = "{{account['account']['username']|safe}}";
+      var cellphone = "{{account['account']['cellphone']|safe}}";
+      var provider = "{{account['account']['cellphone_email']|safe}}".split('@');
+
+      $('#email').val(email);
+      $('#username').val(username);
+      $('#phonenumber').val(cellphone);
+      
+      if(provider[1].indexOf('tmo') > -1){
+        provider = 'tmobile';
+      }
+      else if(provider[1].indexOf('att') > -1){
+        provider = 'att';
+      }
+      else if(provider[1].indexOf('metro') > -1){
+        provider = 'metro pcs';
+      }
+      else if(provider[1].indexOf('vtext') > -1){
+        provider = 'verizon';
+      }
+      $("select option[value='"+ provider +"']").attr("selected","selected");
+      
+
+      $("#save_btn").click(function() {
+        email = $('#email').val();
+        username = $('#username').val();
+        cellphone = $('#phonenumber').val();
+        provider = $('#provider').val();
+        $.post("/update_information", {'email' :email, 'username': username, 'cellphone': cellphone, 'provider': provider}, function(data) {
+        });
+        setTimeout(function(){$('#updated').show()}, 2000);
+        setTimeout(function(){$('#updated').hide()}, 2000);
+      });
+      
+    });
+  </script>
+{% endblock %}

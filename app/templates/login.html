@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mass Message App</title>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta content="" name="login page" />
+    <meta content="" name="Marc santiago" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" >
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/plugins/pace/pace-theme-flash.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/plugins/boostrapv3/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/plugins/font-awesome/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='assets/plugins/jquery-scrollbar/jquery.scrollbar.css') }}">
+    <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='assets/plugins/bootstrap-select2/select2.css') }}">
+    <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='assets/plugins/switchery/css/switchery.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='pages/css/pages-icons.css') }}">
+    <link rel="stylesheet" media="screen" href="{{ url_for('static', filename='assets/plugins/simple-line-icons/simple-line-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='pages/css/pages.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/flash.css') }}">
+  </head>
+  <body class="fixed-header">
+    <!-- START PAGE-CONTAINER -->
+    <div class="login-wrapper ">
+      <!-- START Login Background Pic Wrapper-->
+      <div class="bg-pic">
+        <!-- START Background Pic-->
+        <img src="{{ url_for('static', filename='login_background.jpg')}}" data-src="{{ url_for('static', filename='login_background.jpg')}}" data-src-retina="{{ url_for('static', filename='login_background.jpg')}}" alt="" class="lazy">
+        <!-- END Background Pic-->
+        <!-- START Background Caption-->
+        <div class="bg-caption pull-bottom sm-pull-bottom text-white p-l-20 m-b-20">
+          <h2 class="semi-bold text-white">"Be normal, and the crowd will accept you. Be deranged, and they will make you their leader" -Wheel Of Time</h2>
+        </div>
+        <!-- END Background Caption-->
+      </div>
+      <!-- END Login Background Pic Wrapper-->
+      <!-- START Login Right Container-->
+      <div class="login-container bg-white">
+        <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40">
+          <div class="text-right">
+            <a style="font-size:1.2em" data-target="#info" data-toggle="modal">Learn More</a>
+          </div>
+          <br />
+          <p class="p-t-35">Sign into your fast MMS control center</p>
+          <!-- START Login Form -->
+          <form id="form-login" class="p-t-15" role="form" action="/login" method="post">
+            <!-- START Form Control-->
+            <div class="form-group form-group-default">
+              <label>Login</label>
+              <div class="controls">
+                <input type="email" name="email" placeholder="Email" value="{{email}}" class="form-control">
+              </div>
+            </div>
+            <!-- END Form Control-->
+            <!-- START Form Control-->
+            <div class="form-group form-group-default">
+              <label>Password</label>
+              <div class="controls">
+                <input type="password" class="form-control" name="password" placeholder="Credentials">
+              </div>
+            </div>
+            <!-- START Form Control-->
+            <div class="row">
+            </div>
+            <!-- END Form Control-->
+            <button class="btn btn-info btn-cons m-b-10" type="submit">Sign in</button>
+            <button class="btn btn-info btn-cons m-b-10 pull-right" data-target="#modalFillIn" data-toggle="modal" id="btnFillSizeToggler2">Create Acccount</button>
+            <br />
+            <a href="#" data-target="#forgetPasswordModal" data-toggle="modal" id="">Forget your password?</a>
+            <br /><br />
+            {% if email_validated == False %}
+              <!--action="/confirm" method="post"-->
+              <form role="form">
+                <div class="form-group form-group-default">
+                  <div class="controls">
+                    <input type="email" id="validation_email" name="validation_email" placeholder="Email" class="form-control" value="{{email}}">
+                  </div>
+                </div>
+                <div class="form-group form-group-default">
+                  <label>Enter Validation Token {{email.split('@')[0]}}</label>
+                  <div class="controls">
+                    <input type="text" class="form-control" name="token" id="token">
+                  </div>
+                </div>
+                <button class="btn btn-info btn-cons m-b-10 pull-right" id="validate_btn">Validate</button>
+              </form>
+            {% endif %}
+            <div>
+              {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                  <ul class="flashes">
+                  {% for message in messages %}
+                    <li>{{ message }}</li>
+                  {% endfor %}
+                  </ul>
+                {% endif %}
+              {% endwith %}
+            </div>
+          </form>
+          <!--END Login Form-->
+        </div>
+      </div>
+      <!-- END Login Right Container-->
+    </div>
+    <!-- END PAGE CONTAINER -->
+    <!-- Create an account modal -->
+    <div class="modal fade fill-in" id="modalFillIn" tabindex="-1" role="dialog" aria-hidden="true">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> <i class="pg-close"></i>
+      </button>
+      <div class="modal-dialog ">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="text-left p-b-5"><span class="semi-bold">Create Account</span></h5>
+          </div>
+          <div class="modal-body">
+            <div id="signup_form_div" class="login-container bg-white">
+              <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40">
+                <!-- START Login Form -->
+                <form id="signup_form" class="p-t-15" role="form" action="" method="">
+                  <!-- START Form Control-->
+                  <div class="form-group form-group-default">
+                    <label>Enter An Email Address</label>
+                    <div class="controls">
+                      <input type="email" id="email" name="email" placeholder="email address" class="form-control" required>
+                    </div>
+                  </div>
+                  <label id="email_error" for="email" style="display: block;"></label>
+                  <!-- END Form Control-->
+                  <!-- START Form Control-->
+                  <div class="form-group form-group-default">
+                    <label>Enter A User Name</label>
+                    <div class="controls">
+                      <input type="text" id="username" name="username" placeholder="user name" class="form-control" required>
+                    </div>
+                  </div>
+                  <!-- END Form Control-->
+                  <!-- START Form Control-->
+                  <table class="table table-condensed">
+                    <thead>
+                      <tr>
+                        <th>Cellphone Number</th>
+                        <th>Provider</th>
+                      </tr>
+                    </thead>
+                    <tbody id="phone_inputs">
+                      <tr>
+                        <td>
+                          <input class='phone-number' maxlength="10" minlength="10" type="text" id="phonenumber" name="phonenumber" onkeypress='validate(event);' placeholder="Enter 10 digit number" class="phone_input" required>
+                        </td>
+                        <td>
+                          <select width="100%" style="width:100%" data-init-plugin="" placeholder="" class="provider" id="provider">
+                            <option value="att">A &amp; TT</option>
+                            <option value="tmobile">Tmobile</option>
+                            <option value="metro pcs">Metro Pcs</option>
+                            <option value="verizon">Verizon</option>
+                          </select>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <!-- END Form Control-->
+                  <!-- START Form Control-->
+                  <div class="form-group form-group-default">
+                    <label>Create A Password</label>
+                    <div class="controls">
+                      <input type="password" class="form-control" id="password" name="password" placeholder="Credentials" data-rule-password="true" required>
+                    </div>
+                  </div>
+                  <!-- START Form Control-->
+                  <div class="form-group form-group-default">
+                    <label>Re-enter Password</label>
+                    <div class="controls">
+                      <input type="password" class="form-control" id="confirmed_password" name="confirmed_password" placeholder="Credentials" data-rule-password="true" data-rule-equalTo="#password" required>
+                    </div>
+                  </div>
+                  <!-- END Form Control-->
+                  <!-- START Form Control-->
+                  <div class="row">
+                    <div class="col-md-6 no-padding"></div>
+                  </div>
+                  <!-- END Form Control-->
+                  <button id="create_account_button" class="btn btn-info btn-cons m-b-10" type="submit">Create Account</button>
+                </form>
+                <!--END Login Form-->
+                <div class="pull-bottom sm-pull-bottom">
+                  <div class="m-b-30 p-r-80 sm-m-t-20 sm-p-r-15 sm-p-b-20 clearfix">
+                    <div class="col-sm-3 col-md-2 no-padding">
+                    </div>
+                    <div class="col-sm-9 no-padding m-t-10">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer"></div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- End Modal -->
+    <!--FORGOT PASSWORD MODAL -->
+    <div class="modal fade fill-in" id="forgetPasswordModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> <i class="pg-close"></i></button>
+      <div class="modal-dialog ">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="text-left p-b-5"><span class="semi-bold">Forgot Password</span></h5>
+          </div>
+          <div class="modal-body">
+            <div id="signup_form_div" class="login-container bg-white">
+              <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40">
+                <!-- START Login Form -->
+                <form id="forgot_password" class="p-t-15" role="form" action="/forget_password" method="post">
+                  <!-- START Form Control-->
+                  <div class="form-group form-group-default">
+                    <label>Enter An Email Address</label>
+                    <div class="controls">
+                      <input type="email" id="" name="email" placeholder="email address" class="form-control" required>
+                    </div>
+                  </div>
+                  <!-- END Form Control-->
+                  <button id="" class="btn btn-info btn-cons m-b-10" type="submit">Request Password</button>
+                </form>
+                <!--END Login Form-->
+                <div class="pull-bottom sm-pull-bottom">
+                  <div class="m-b-30 p-r-80 sm-m-t-20 sm-p-r-15 sm-p-b-20 clearfix">
+                    <div class="col-sm-3 col-md-2 no-padding">
+                    </div>
+                    <div class="col-sm-9 no-padding m-t-10">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer"></div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- End Modal -->
+    <!-- Modal -->
+    <div id="info" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Fast MMS's Intent</h4>
+          </div>
+          <div class="modal-body">
+            <p>
+              This service was primilary created for those who constantly send group text messages. 
+              While yes, you can just as easily send the messages via your phone, sending them through this app has some advantages.
+            </p>
+            <ol>
+              <li>You can type alot faster with a full keyboard (Images can be send too!)</li>
+              <li>You can create MMS groups, which can be modified</li>
+              <li>You don't have to worry about whether the user is an android user or an apple user</li>
+              <li>People in your MMS groups can't reply to each other (Won't drag people into unwanted group messages)</li>
+            </ol>
+            <br /><br />
+            <p><b>How the App Works</b></p>
+            <hr />
+            <p>
+              This app taps in the a little known fact about cell phone networks. 
+              All cell phone numbers have an email address.  That means that you can send a message via email to a phone. 
+              Every provider has a different email address, which is why this app requires that you know the cell phone network of the person you've added to your group. 
+              There are similar services, such as Twilio that don't require that you know to know the network.
+              There are also services that attempt to find a cell phone's network by looking at database records. Both these services cost money.
+              So, in order to keep the cost down, I made the assumption that the person that you are trying to contact is someone you know and can ask for network information.
+            </p>
+            <br / >
+            <p>App's Currrent Status: <b>Beta</b></p>
+            <p>If you have any questions, I can be reached at</p>
+            <address>
+              <a href="mailto:#">reticentroot@gmail.com</a>
+            </address>
+            <br/ >
+            <p><b>Enjoy!</b></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- BEGIN VENDOR JS -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='assets/js/icon.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/pace/pace.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/modernizr.custom.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/boostrapv3/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/jquery/jquery-easy.js') }}"></script> 
+    <script src="{{ url_for('static', filename='assets/plugins/jquery-unveil/jquery.unveil.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/jquery-bez/jquery.bez.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/jquery-ios-list/jquery.ioslist.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/jquery-actual/jquery.actual.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/bootstrap-select2/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/classie/classie.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/jquery.sieve.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/js/scripts.js') }}"></script>
+    <script src="{{ url_for('static', filename='pages/js/pages.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='jquery_validation/jquery.validate.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery_validation/additional-methods.min.js') }}"></script>
+    <script>
+      function validate(evt) {
+        var theEvent = evt || window.event;
+        var key = theEvent.keyCode || theEvent.which;
+        key = String.fromCharCode( key );
+        var regex = /[0-9]|\./;
+        if( !regex.test(key) ) {
+          theEvent.returnValue = false;
+          if(theEvent.preventDefault) theEvent.preventDefault();
+        }
+      }
+      // onload methods
+      $(function () {
+        // create account post
+        $("#create_account_button").click(function(data){
+          var email = $('#email').val();
+          var username = $('#username').val();
+          var phonenumber = $('#phonenumber').val();
+          var password = $('#password').val();
+          var provider = $('#provider').val();
+          $.post("/create_account", {'email': email, 'username': username, 'phonenumber': phonenumber, 'password': password, 'provider': provider} , function(data) {
+          });
+        });
+        // to check that the email address entered is corrrectly formatted
+        // as well as to confirm the password was correctly typed
+        $('#form-login').validate();
+        $("#signup_form").validate({
+          rules: {
+            phonenumber: {
+              required: true,
+              phoneUS: true
+            }
+          }
+        });
+        
+        // check to see if the email address exist on the database already
+        $("#email").change(function() {
+          $.post( "/check_email", {'email': $("#email").val()}, function(data) {
+            var valid = data;
+            if(valid == 'false'){
+              $('#create_account_button').prop('disabled', true);
+              $('#email_error').text("Email exist already").css('color', 'red'); 
+            }
+            else{
+              $('#create_account_button').prop('disabled', false);
+              $('#email_error').text("");
+            }
+          });
+        });
+        
+        //validation btn 
+        $("#validate_btn").click(function(data){
+          var token = $('#token').val();
+          var email = $('#validation_email').val();
+          alert(token);
+          alert(email);
+          $.post("/confirm", {'token': token, 'validation_email': email}, function(data) {
+          });
+        });
+        
+      // end of document load
+      });
+    </script>
+  </body>
+</html>

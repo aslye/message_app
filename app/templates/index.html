@@ -1,0 +1,465 @@
+{% extends "base.html" %}
+{% block title %}Fast MMS{% endblock %}
+{% block style %}
+  {{super()}}
+  <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/duallistbox/bootstrap-duallistbox.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='uploadifive-v1/uploadifive.css')}}">
+{% endblock %}
+{% block breadcrumb %}
+  <li><a href="/">Admin</a></li>
+  <li><a href="/">mms group</a></li>
+  <li>
+    <select data-init-plugin="select2" placeholder="Select a mms group" id="mms_categories">
+      <option value="all">No MMS Group Selected</option>
+    </select>
+  </li>
+  <div class="row pull-right">
+    <div class="col-xs-12 col-sm-12 col-md-12">
+      <button class="btn btn-info btn-cons m-b-10" style="color:white;" type="button" data-target="#modalFillIn" data-toggle="modal" id="new_mms_group_btn"><i class="fa fa-plus"></i> <span class="bold">Create New MMS Group</span></button>
+    </div>
+  </div>
+{% endblock %}
+{% block page_content %}
+  <form>
+    <select multiple="multiple" size="10" name="groups" class="demo2" style="display: none;" id="mms_group">
+      <!-- <option value=""><option> -->
+    </select>
+    <br /><br />
+    <div class="row">
+      <!-- <div class="col-xs-6 col-sm-3 col-md-3">
+        <button class="btn btn-info btn-cons m-b-10" type="button" data-target="#modalFillIn" data-toggle="modal" id="new_mms_group_btn"><i class="fa fa-plus"></i> <span class="bold">Create New MMS Group</span></button>
+      </div> -->
+      <div class="col-xs-6 col-sm-3 col-md-3">
+        <button style="display: none;" class="btn btn-info btn-cons m-b-10" type="button" data-target="#modalFillIn2" data-toggle="modal" id="edit_btn"><i class="fa fa-pencil"></i> <span class="bold">Edit Group</span></button>
+      </div>
+      <div class="col-xs-6 col-sm-3 col-md-3 pull-right">
+        <button style="display: none;" class="btn btn-info btn-cons m-b-10" type="button" id="remove_btn"><i class="fa fa-floppy-o"></i> <span class="bold">Remove Numbers</span></button>
+      </div>
+    </div>
+  </form>
+  <br /><br /><br /><br />
+  <!--Add upload form -->
+  <!-- <form enctype="multipart/form-data">
+    <input id="file_upload" name="filename" type="file" multiple="true">
+  </form> -->
+  <hr />
+  <form style="display: none;" action="/upload" method="post" enctype="multipart/form-data" id='my_form'>
+    <div class="row">
+      <div class="col-xs-6 col-sm-3 col-md-3">
+        <input style=" border: none; background-color: transparent;" type="text" id="form_group_name" name="group_name" readonly>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group">
+        <label for="comment">Enter Message:</label>
+        <textarea class="form-control" rows="5" name="sms_data" id="sms_data"></textarea>
+      </div>
+      <div class="col-xs-6 col-sm-3 col-md-3">
+        <input type="file" id="file" name="file" class='file'>
+      </div>
+    </div>
+    <br / >
+    <input class="pull-right" type="submit" value="Send MMS">
+    <!-- <button class="pull-right" id="send_mms" >Send MMS</button> -->
+  </form>
+  <br /><br /><br /><br />
+  <!-- CREATE AN ACCOUNT MODAL -->
+  <div class="modal fade fill-in" id="modalFillIn" tabindex="-1" role="dialog" aria-hidden="true">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> <i class="pg-close"></i>
+    </button>
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="text-left p-b-5"><span class="semi-bold">New MMS Group</span></h5>
+        </div>
+        <div class="modal-body">
+          <div id="signup_form_div" class="login-container bg-white">
+            <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40">
+              <!-- START Login Form -->
+              <form id="" class="p-t-15" role="form" action="" method="">
+                <!-- START Form Control-->
+                <div class="form-group form-group-default">
+                  <label>Group Name</label>
+                  <div class="controls">
+                    <input type="text" id="group_name" name="group_name" placeholder="Group Name" class="form-control" required>
+                  </div>
+                </div>
+                <!-- END Form Control-->
+                <!-- START Form Control-->
+                <table class="table table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Cell Phone</th>
+                      <th>Provider</th>
+                    </tr>
+                  </thead>
+                  <tbody id="phone_inputs">
+                    <tr>
+                      <td>
+                        <input class='name' type="text" required>
+                      </td>
+                      <td>
+                        <input class='phone-number' maxlength="10" minlength="10" type="text" id="phonenumber1" name="phonenumber" onkeypress='validate(event);' placeholder="Enter 10 digit number" class="phone_input" required>
+                      </td>
+                      <td>
+                        <select width="100%" style="width:100%" data-init-plugin="" placeholder="" class="provider_catergories" id="provider_catergories">
+                          <option value="unknown">Unknown</option>
+                          <option value="att">A &amp; TT</option>
+                          <option value="tmobile">Tmobile</option>
+                          <option value="metro pcs">Metro Pcs</option>
+                          <option value="verizon">Verizon</option>
+                        </select>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <br /><br />
+                <!-- END Form Control-->
+                <a><span class="pull-right" onclick="createInputField();"><i class="fa fa-plus"></i></span></a>
+                <button id="create_mms_group_btn" class="btn btn-info btn-cons m-b-10" type="submit"><i class="fa fa-plus"></i> <span class="bold">Create</span></button>
+              </form>
+              <!--END Login Form-->
+              <div class="pull-bottom sm-pull-bottom">
+                <div class="m-b-30 p-r-80 sm-m-t-20 sm-p-r-15 sm-p-b-20 clearfix">
+                  <div class="col-sm-3 col-md-2 no-padding">
+                  </div>
+                  <div class="col-sm-9 no-padding m-t-10">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer"></div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+  </div>
+    <!-- /.modal-dialog -->
+    <!--EDIT GROUP MODAL -->
+    <div class="modal fade fill-in" id="modalFillIn2" tabindex="-1" role="dialog" aria-hidden="true">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> <i class="pg-close"></i>
+      </button>
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="text-left p-b-5" id=""><span class="semi-bold" id="group_title"><!--Group name--></span></h5>
+          </div>
+          <div class="modal-body">
+            <div id="signup_form_div" class="login-container bg-white">
+              <div class="p-l-50 m-l-20 p-r-50 m-r-20 p-t-50 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40">
+                <!-- START Login Form -->
+                <form id="" class="p-t-15" role="form" action="" method="">
+                  <!-- START Form Control-->
+                  <div class="form-group form-group-default">
+                    <label>Group Name</label>
+                    <div class="controls">
+                      <input type="text" id="edit_group_name" name="edit_group_name" placeholder="Edit Group Name" value="" class="form-control" required>
+                    </div>
+                  </div>
+                  <!-- END Form Control-->
+                  <!-- START Form Control-->
+                  <table class="table table-condensed">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Cell Phone</th>
+                        <th>Provider</th>
+                      </tr>
+                    </thead>
+                    <tbody id="group_data">
+                      <!--Jquery Generated -->
+                    </tbody>
+                  </table>
+                  <br /><br />
+                  <!-- END Form Control-->
+                  <a><span class="pull-right" onclick="createInputField2();"><i class="fa fa-plus"></i></span></a>
+                  <button id="edit_mms_group_btn" class="btn btn-info btn-cons m-b-10" type="submit"><i class="fa fa-floppy-o"></i> <span class="bold">Save</span></button>
+                </form>
+                <!--END Login Form-->
+                <div class="pull-bottom sm-pull-bottom">
+                  <div class="m-b-30 p-r-80 sm-m-t-20 sm-p-r-15 sm-p-b-20 clearfix">
+                    <div class="col-sm-3 col-md-2 no-padding">
+                    </div>
+                    <div class="col-sm-9 no-padding m-t-10">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer"></div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+    </div>
+      <!-- /.modal-dialog -->
+    <!--NEW USER INFORMATION -->
+    <!-- Modal -->
+    <div id="welcomeModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Welcome {{account['account']['username'].title()|safe}}</h4>
+          </div>
+          <div class="modal-body">
+            <p><b>Information About The App</b></p>
+            <p>
+              This service is intended to help send group messages.  Plain and simple. I made a few assumptions when designing this app.
+            </p>
+            <ul>
+              <li>The people you are planning to message are indeed people you know</li>
+              <li>That you know the cell phone provider of the person you are trying to message</li>
+            </ul>
+            <br />
+            <p>
+              The last point is very important. In order to keep this app as free as possible I avoided using messaging services
+              like Twillio.  Instead the app takes advantage of the fact that ever provider has an email address that can be used 
+              to send and receive messages directly on your phone.  As such, providering the network is the currenly the only way to
+              ensure that the proper email address is found.
+            </p>
+            <p>
+              <b>NOTICE</b> I'm working on a way to sent the messages as if it came from your number, it currently sends from your email.
+            </p>
+            <p>
+              <b>Note</b> This app is in <b>BETA</b> and therefore may not work 100%, so please provider feedback. Thank you and Enjoy!
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+  {{super()}}
+  <script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.min.js"></script>
+  <script src="{{ url_for('static', filename='js/duallistboxjs/jquery.bootstrap-duallistbox.min.js')}}"></script>
+  <script src="{{ url_for('static', filename='uploadifive-v1/jquery.uploadifive.min.js')}}"></script>
+  <script>
+  
+    $(document).ready(function() {
+
+      //global variables
+      var selectedGroup;
+      var mmsGroup;
+
+      // user account object
+      try{
+        var accountObj = {{account|tojson|safe}};
+        mmsDropdown(accountObj['groups']);
+      }
+      catch(err){
+        
+      }
+      // trigger welcome modal
+      if(accountObj['new_user'] == true){
+         $('#welcomeModal').modal('show'); 
+         $.post("/new_user", {}, function(data) {
+         });
+      }
+      // $('#file_upload').uploadifive({
+//         'uploadLimit'  : 1,
+//         'formData'         : {'someKey' : 'someValue'},
+//         'method'   : 'post',
+//         'fileType'     : 'image/*',
+//         'fileSizeLimit' : '3 MB',
+//         'formData' : { 'someKey' : 'someValue' },
+//         //'uploadScript' : "{{ url_for('static', filename='uploadifive-v1/upload.py')}}"
+//         'uploadScript' : "/upload"
+//       });
+
+      // populate the left side of the duallist box with the numbers in the mms group
+      $('#mms_categories').change(function() {
+        $('#remove_btn').show();
+        $('#edit_btn').show();
+        $('#my_form').show();
+        $(this).find("option:selected").each(function() {
+          selectedGroup = $(this).val();
+          $('#form_group_name').val(selectedGroup)
+          var html = '';
+          var count = 1;
+          //*********************************//
+          // set up edit group information here
+          $('#group_title').html('Edit ' + selectedGroup);
+          $('#edit_group_name').val(selectedGroup);
+          
+          for(var key in accountObj['groups'][selectedGroup]){
+            var value = accountObj['groups'][selectedGroup][key]['email'];
+            var n  = accountObj['groups'][selectedGroup][key]['name']
+            html += '<tr>';
+            html += '<td><input class=\'name\' type="text" value="' + n + '" ></td>';
+            html += '<td><input class=\'edit-phone-number\' maxlength="10" minlength="10" type="text" id="edit_phonenumber' + count +'" name="phonenumber" onkeypress=\'validate(event);\' placeholder="Enter 10 digit number" class="edit_phone_input" value=' + key + '></td>';
+            // pre select a provider
+            if(value.indexOf('tmo') > -1){
+              html += '<td><select width="100%" style="width:100%" data-init-plugin="" placeholder="" class="edit_provider_catergories" id="provider_catergories"><option value="unknown">Unknown</option><option value="att">A &amp; TT</option><option value="tmobile" selected>Tmobile</option><option value="metro pcs">Metro Pcs</option><option value="verizon">Verizon</option></select></td>';
+            }
+            else if(value.indexOf('att') > -1){
+              html += '<td><select width="100%" style="width:100%" data-init-plugin="" placeholder="" class="edit_provider_catergories" id="provider_catergories"><option value="unknown">Unknown</option><option value="att" selected>A &amp; TT</option><option value="tmobile">Tmobile</option><option value="metro pcs">Metro Pcs</option><option value="verizon">Verizon</option></select></td>';
+            }
+            else if(value.indexOf('metro') > -1){
+              html += '<td><select width="100%" style="width:100%" data-init-plugin="" placeholder="" class="edit_provider_catergories" id="provider_catergories"><option value="unknown">Unknown</option><option value="att">A &amp; TT</option><option value="tmobile">Tmobile</option><option value="metro pcs" selected>Metro Pcs</option><option value="verizon">Verizon</option></select></td>';
+            }
+            else if(value.indexOf('vtext') > -1){
+              html += '<td><select width="100%" style="width:100%" data-init-plugin="" placeholder="" class="edit_provider_catergories" id="provider_catergories"><option value="unknown">Unknown</option><option value="att">A &amp; TT</option><option value="tmobile">Tmobile</option><option value="metro pcs">Metro Pcs</option><option value="verizon" selected>Verizon</option></select></td>';
+            }
+            html += '</tr>';
+            count++;
+          }
+          $('#group_data').html(html);
+          //*********************************//
+          html = '';
+          // populate the left side
+          for(var key in accountObj['groups'][selectedGroup]){
+            var users_name = accountObj['groups'][selectedGroup][key]['name']
+            html += '<option value="' + key + '">' + users_name + ' - '+ key + '</option>';
+          }
+          $('#mms_group').html(html);
+        });
+          // builds the jquery duallistbox
+          mmsGroup = $('#mms_group').bootstrapDualListbox({
+            nonSelectedListLabel: 'CURRENT GROUP NUMBERS',
+            selectedListLabel: 'NUMBERS TO BE DELETED',
+            preserveSelectionOnMove: 'moved',
+            moveOnSelect: false,
+          });
+          mmsGroup.bootstrapDualListbox('refresh');
+      });
+
+      // create group button logic
+      $('#create_mms_group_btn').click(function() {
+        var phone_numbers = {};
+        var phone_numbers_cleaned = [];
+        var providers = [];
+        var num_names = [];
+        var count = 1;
+        var group_name = $('#group_name').val();
+        var post_data = true;
+        $(".phone-number").each(function() {
+            phone_numbers[$(this).attr("name") + count.toString()] = $(this).val();
+            count++;
+        });
+        // build provider list
+        $('.provider_catergories option:selected').each(function() {
+          var provider = $(this).attr('value');
+          if(provider == 'unknown'){
+            if(!confirm('Are you sure you want to proceed? You didn\'t provide a provider for one of your cell phone numbers, there is no garantee that you\'ll be able to send a message to it')){
+              post_data = false;
+            }
+          }
+          providers.push(provider);
+        });
+        
+        //build name list
+        $(".name").each(function() {
+          var names = $(this).val();
+          if(names != '') {
+            num_names.push(names);
+          }
+        });
+
+        if(post_data){
+          // seperate number from form name and build list
+          for(var i in phone_numbers) {
+            phone_numbers_cleaned.push(phone_numbers[i]);
+          }
+          // associate the list
+          var map = createAssociativeArray(phone_numbers_cleaned, providers);
+          var map2 = createAssociativeArray(phone_numbers_cleaned, num_names)
+          // post the data to be proccessed on back end
+          $.post("/validate_numbers", {'phonenumbers': JSON.stringify(map), 'group_name': group_name, 'names':JSON.stringify(map2)}, function(data) {
+          });
+        }
+      });
+      
+      // edit group button
+      $('#edit_mms_group_btn').click(function() {
+        var phone_numbers = {};
+        var phone_numbers_cleaned = [];
+        var providers = [];
+        var num_names = [];
+        var count = 1;
+        var group_name = $('#edit_group_name').val();
+        var post_data = true;
+        $(".edit-phone-number").each(function() {
+            phone_numbers[$(this).attr("name") + count.toString()] = $(this).val();
+            count++;
+        });
+        //build name list
+        $(".name").each(function() {
+          var names = $(this).val();
+          if(names != '') {
+            num_names.push(names);
+          }
+        });
+
+        // build provider list
+        $('.edit_provider_catergories option:selected').each(function() {
+          var provider = $(this).attr('value');
+          if(provider == 'unknown'){
+            if(!confirm('Are you sure you want to proceed? You didn\'t provide a provider for one of your cell phone numbers, there is no garantee that you\'ll be able to send a message to it')){
+              post_data = false;
+            }
+          }
+          providers.push(provider);
+        });
+        if(post_data){
+          // seperate number from form name and build list
+          for(var i in phone_numbers) {
+            phone_numbers_cleaned.push(phone_numbers[i]);
+          }
+          // associate the list
+          var map = createAssociativeArray(phone_numbers_cleaned, providers);
+          var map2 = createAssociativeArray(phone_numbers_cleaned, num_names)
+          // post the data to be proccessed on back end
+          $.post("/edit_group", {'phonenumbers': JSON.stringify(map), 'group_name': group_name, 'old_group_name': selectedGroup, 'names':JSON.stringify(map2)}, function(data) {
+          }); 
+        }
+        else{
+          $('.pg-close').click();
+        }
+      });
+      // remove changes button
+      $('#remove_btn').click(function() {
+        var rightVals = [];
+        $('#bootstrap-duallistbox-selected-list_groups option:selected').each(function() {
+          var right = $(this).attr('value');
+          if(right != '') {
+            rightVals.push(right);
+          }
+        });
+        $.post("/remove_group", {'right_vals': JSON.stringify(rightVals), 'group_name': selectedGroup}, function(data) {
+        });
+        setTimeout(function(){location.reload()}, 2000);
+      });
+      
+      // send mms
+      // $('#send_mms').click(function() {
+      //   var smsData = $('#sms_data');
+      //   var data = new FormData();
+      //   jQuery.each(jQuery('#file')[0].files, function(i, file) {
+      //       data.append('file-'+i, file);
+      //   });
+      //   alert(selectedGroup);
+      //   jQuery.ajax({
+      //       url: '/upload',
+      //       data: data,//{'file': data, 'group_name': selectedGroup, 'sms_data': smsData},
+      //       cache: false,
+      //       contentType: false,
+      //       processData: false,
+      //       type: 'POST',
+      //       success: function(data){
+      //       }
+      //   });
+      // });
+      
+    // end of document ready function
+    });
+  </script>
+{% endblock %}
