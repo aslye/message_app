@@ -20,8 +20,8 @@ class SendEmail(object):
 
   def send_attach(self, sender='', recipients='', subject='', html='', filename=''):
     return requests.post(
-      "https://api.mailgun.net/v3/mg.reticentroot.com/messages",
-      auth=("api", "key-6d3072d1fb205c9703f5ff977b3c466b"),
+      "",
+      auth=("api", ""),
       files=[("attachment", open(filename))],
       data={
         "from": sender,
